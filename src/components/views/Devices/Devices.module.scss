@@ -1,0 +1,26 @@
+@import '../../../styles/settings.scss';
+
+.root {
+    margin-top: 30px;
+
+    .list {
+        align-items: center;
+
+        .smartImage {
+            max-width: 100%;
+            padding: 20px;
+        }
+
+        .card {
+            margin: 10px 0;
+            cursor: pointer !important;
+            .iconWrapper {
+                position: absolute;
+                left: 85%;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+    }
+
+}

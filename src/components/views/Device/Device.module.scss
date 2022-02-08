@@ -1,0 +1,24 @@
+@import '../../../styles/settings.scss';
+
+.root {
+    margin: 30px 10px;
+    max-width: 100%;
+    overflow: hidden;
+    
+    .iconWrapper {
+        position: absolute;
+        left: 85%;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .button {
+        width: 100%;
+    }
+
+    .draggable, .resizable, .gesturable {
+        -ms-touch-action: none;
+        touch-action: none;
+        user-select: none;
+      }
+}

@@ -1,0 +1,15 @@
+.root {
+  background-color: #363636;
+  
+  .titleWrapper {
+    text-align: center;
+    justify-content: center;
+    .title {
+      font-family: 'Caveat', cursive;
+      font-size: 2rem;
+      padding-top: 1rem;
+      color: white;
+      margin-top: 0;
+    }
+  }
+}
