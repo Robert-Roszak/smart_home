@@ -5,8 +5,17 @@ const fs = require('fs');
 router.get('/devices', async (req, res) => {
   fs.readFile('./public/data.json', (err, data) => {
     if (err) throw err;
-    const devices = JSON.parse(data);
-    return res.json(devices);
+    const allDevices = JSON.parse(data);
+    const SmartDevices = [];
+    allDevices.forEach(device => {
+      let SmartDevice = {};
+      SmartDevice.type = device.type;
+      SmartDevice.id = device.id;
+      SmartDevice.name = device.name;
+      SmartDevice.connectionState = device.connectionState;
+      SmartDevices.push(SmartDevice);
+    });
+    return res.json(SmartDevices);
   });
 });
 
@@ -27,13 +36,14 @@ router.post('/devices', async (req, res) => {
     const devices = JSON.parse(data);
     const devicesToPost = devices.filter(item => item.id !== deviceToPost.id);
     devicesToPost.push(deviceToPost);
+    // KNOWN ISSUE: below line causes page reload - if data was saved in API, there would be no reload
     fs.writeFileSync('./public/data.json', JSON.stringify(devicesToPost));
-    return res.json(devicesToPost);
+    return res.json(deviceToPost);
   });
 });
 
 router.get('/devices/refresh', async (req, res) => {
-  req.io.broadcast.emit('refresh');
+  req.io.emit('refresh');
 });
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import io from 'socket.io-client';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
@@ -12,6 +12,8 @@ let socket;
 export const Device = () => {
   const dispatch = useDispatch();
   const id = window.location.pathname.replace('/','');
+  const [device, setDevice] = useState();
+  const [connectionState, setConnectionState] = useState();
   
   useEffect(() => {
     dispatch(fetchDeviceById(id));
@@ -26,20 +28,32 @@ export const Device = () => {
 
   },[dispatch, id]);
 
-  const device = useSelector((state) => state.devices.data[0]);
+  const deviceData = useSelector((state) => state.devices);
 
-  const toggleDevice = (socket, device) => {
-    let changedDevice = device;
-    if (changedDevice.connectionState === 'connected' || changedDevice.connectionState === 'poor connection') {
-      changedDevice.connectionState = 'disconnected';
+  useEffect(() => {
+    setDevice(deviceData.data[0]);
+  },[deviceData]);
+
+  useEffect(() => {
+    if (device) {
+      setConnectionState(device.connectionState);
+    }
+  },[device]);
+
+  const toggleDevice = (device) => {
+    if (device.connectionState === 'connected' || device.connectionState === 'poor connection') {
+      device.connectionState = 'disconnected';
+      setConnectionState('disconnected');
     }
     else {
       const connectionState = ['connected', 'poor connection'];
       const randomStateNumber = Math.floor(Math.random() * connectionState.length);
       const randomState = connectionState[randomStateNumber];
-      changedDevice.connectionState = randomState;
-    } 
-    dispatch(toggleDeviceRedux(socket, changedDevice));
+      device.connectionState = randomState;
+      setConnectionState(randomState);
+    }
+    socket.emit('refresh');
+    dispatch(toggleDeviceRedux(device, socket));
   };
 
   if (device) {
@@ -50,13 +64,13 @@ export const Device = () => {
             <Card border="secondary" className={styles.card}>
               <Card.Body>
                 <div className={styles.iconWrapper}>
-                  <Icon type={device.type} />
+                  <Icon type={device.type} connectionState={connectionState}/>
                 </div>
                 <Card.Title>
                   {device.name}
                 </Card.Title>
                 <Card.Text>
-                  Status: <i>{device.connectionState}</i>
+                  Status: <i>{connectionState}</i>
                 </Card.Text>
                 {
                   device.type === 'bulb' ?
@@ -69,7 +83,7 @@ export const Device = () => {
                       </Card.Text>
                       <Card.Text>
                         Bulb&apos;s color:
-                        <span style={{backgroundColor: device.color, color: 'transparent'}}>device color</span>
+                        <span className={styles.bulbColor} style={{backgroundColor: device.color}} />
                       </Card.Text>
                     </>
                     : ''
@@ -97,7 +111,7 @@ export const Device = () => {
                     </>
                     : ''
                 }
-                <Button className={styles.button} variant="primary" onClick={() => toggleDevice(socket, device)}>Toggle the device</Button>
+                <Button className={styles.button} variant="primary" onClick={() => toggleDevice(device)}>Toggle the device</Button>
               </Card.Body>                    
             </Card>
           </Col>

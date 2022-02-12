@@ -18,7 +18,7 @@ app.use((req, res, next) => {
 });
 
 /* API ENDPOINTS */
-app.use('/api', devicesRoutes);
+app.use('/api/v1', devicesRoutes);
 
 /* API ERROR PAGES */
 app.use('/api', (req, res) => {
@@ -26,7 +26,6 @@ app.use('/api', (req, res) => {
 });
 
 /* REACT WEBSITE */
-app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.static(path.join(__dirname, '../build')));
 app.use('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../build/index.html'));
@@ -42,6 +41,11 @@ const io = socket(server);
 
 io.on('connection', (socket) => {
   console.log('New client! Its id – ' + socket.id);
+  
+  socket.on('refresh', () => {
+    socket.broadcast.emit('refresh');
+  });
+
 });
 
 module.exports = server;

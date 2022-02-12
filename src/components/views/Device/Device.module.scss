@@ -16,9 +16,12 @@
         width: 100%;
     }
 
-    .draggable, .resizable, .gesturable {
-        -ms-touch-action: none;
-        touch-action: none;
-        user-select: none;
-      }
+    .bulbColor {
+        position: absolute;
+        height: 1.5rem;
+        margin-left: 10px;
+        width: 100px;
+        display: inline-block;
+    }
+
 }

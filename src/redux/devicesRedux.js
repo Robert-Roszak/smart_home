@@ -35,11 +35,12 @@ export const fetchDeviceById = (id) => (dispatch) => {
     .catch(err => dispatch(fetchError(err.message || true)));
 };
 
-export const toggleDevice = (socket, deviceToPost) => (dispatch) => {
+export const toggleDevice = (deviceToPost, socket) => (dispatch) => {
   Axios
     .post(`${API_URL}/devices/`, deviceToPost)
     .then(res => {
-      socket.broadcast.emit('refresh');
+      // action/dispatch is not required - frontend uses useState, emits refresh, backend saves changes
+      //dispatch(fetchSuccess(res.data));
     } )
     .catch(err => dispatch(fetchError(err.message || true)));
 };
